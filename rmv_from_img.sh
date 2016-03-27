@@ -18,5 +18,8 @@ rm -fr $WSYSTEMDIR/usr/share/vim
 rm -f  $WSYSTEMDIR/xbin/bash
 rm -f  $WSYSTEMDIR/xbin/nano
 rm -f  $WSYSTEMDIR/xbin/vim
+rm -f  $WSYSTEMDIR/micro_bench_static
+rm -f  $WSYSTEMDIR/xbin/{ls,ps}
 
+[ -e $WSYSTEMDIR/xbin/fstrim ] || ln -s ./busybox $WSYSTEMDIR/xbin/fstrim
 [ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s ./libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so

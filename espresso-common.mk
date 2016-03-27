@@ -33,6 +33,7 @@ PRODUCT_PACKAGES += \
     fstab.espresso \
     init.espresso.usb.rc \
     init.espresso.rc \
+    init.rom.rc \
     ueventd.espresso.rc
 
 # Recovery Ramdisk

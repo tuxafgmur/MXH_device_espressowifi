@@ -92,13 +92,14 @@ BOARD_SEPOLICY_DIRS += \
     device/samsung/espresso/sepolicy
 
 # Recovery
+BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 BOARD_UMS_LUNFILE := "/sys/class/android_usb/f_mass_storage/lun0/file"
 BOARD_USES_MMCUTILS := true
 BOARD_HAS_NO_MISC_PARTITION := true
 BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_SUPPRESS_EMMC_WIPE := true
-TARGET_RECOVERY_FSTAB := device/samsung/espresso/rootdir/etc/fstab.tab2
+TARGET_RECOVERY_FSTAB := device/samsung/espresso/rootdir/etc/fstab.espresso
 TARGET_RECOVERY_DEVICE_DIRS += device/samsung/espresso
 RECOVERY_FSTAB_VERSION := 2
 BOARD_HAS_DOWNLOAD_MODE := true

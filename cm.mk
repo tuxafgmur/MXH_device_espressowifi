@@ -18,6 +18,9 @@
 TARGET_SCREEN_HEIGHT := 480
 TARGET_SCREEN_WIDTH := 600
 
+# Device have its own init.rc
+TARGET_PROVIDES_INIT_RC := true
+
 # Inherit common CM configuration
 $(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
 
