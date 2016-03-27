@@ -23,3 +23,9 @@ rm -f  $WSYSTEMDIR/xbin/{ls,ps}
 
 [ -e $WSYSTEMDIR/xbin/fstrim ] || ln -s ./busybox $WSYSTEMDIR/xbin/fstrim
 [ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s ./libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so
+
+sed '/dalvik.vm.stack-trace-file/d' -i $WSYSTEMDIR/build.prop
+sed '/ro.expect.recovery_id/d'      -i $WSYSTEMDIR/build.prop
+sed 's;dalvik.vm.heapstartsize=5m;dalvik.vm.heapstartsize=8m;'       -i $WSYSTEMDIR/build.prop
+sed 's;dalvik.vm.heapsize=256m;dalvik.vm.heapsize=174m;'             -i $WSYSTEMDIR/build.prop
+sed 's;dalvik.vm.heapgrowthlimit=48m;dalvik.vm.heapgrowthlimit=64m;' -i $WSYSTEMDIR/build.prop
