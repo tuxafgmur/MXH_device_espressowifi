@@ -25,10 +25,10 @@ TARGET_PROVIDES_INIT_RC := true
 $(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
 
 # CyanogenMod specific overlay
-DEVICE_PACKAGE_OVERLAYS += device/samsung/espresso/overlay/cm-common
+DEVICE_PACKAGE_OVERLAYS += device/samsung/espressowifi/overlay/cm-common
 
 # Inherit device configuration
-$(call inherit-product, device/samsung/espresso/aosp_espresso.mk)
+$(call inherit-product, device/samsung/espressowifi/aosp_espresso.mk)
 
 # Device identifier. This must come after all inclusions
-PRODUCT_NAME := cm_espresso
+PRODUCT_NAME := cm_espressowifi
