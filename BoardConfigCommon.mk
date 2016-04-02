@@ -91,14 +91,39 @@ BOARD_USE_LEGACY_SENSORS_FUSION := false
 BOARD_SEPOLICY_DIRS += device/samsung/espressowifi/sepolicy
 
 # Recovery
+RECOVERY_VARIANT := twrp
+
 BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-BOARD_UMS_LUNFILE := "/sys/class/android_usb/f_mass_storage/lun0/file"
-BOARD_USES_MMCUTILS := true
-BOARD_HAS_NO_MISC_PARTITION := true
-BOARD_HAS_NO_SELECT_BUTTON := true
-BOARD_SUPPRESS_EMMC_WIPE := true
 TARGET_RECOVERY_FSTAB := device/samsung/espressowifi/rootdir/etc/fstab.espresso
-TARGET_RECOVERY_DEVICE_DIRS += device/samsung/espressowifi
+BOARD_SUPPRESS_EMMC_WIPE := true
+BOARD_UMS_LUNFILE := "/sys/class/android_usb/f_mass_storage/lun0/file"
 RECOVERY_FSTAB_VERSION := 2
-BOARD_HAS_DOWNLOAD_MODE := true
+TARGET_RECOVERY_DEVICE_DIRS += device/samsung/espressowifi
+
+ifneq ($(RECOVERY_VARIANT),twrp)
+# CM
+    BOARD_HAS_DOWNLOAD_MODE := true
+    BOARD_HAS_NO_MISC_PARTITION := true
+    BOARD_HAS_NO_SELECT_BUTTON := true
+    BOARD_USES_MMCUTILS := true
+else
+# TWRP
+    BOARD_CUSTOM_BOOTIMG_MK := device/samsung/espressowifi/custombootimg.mk
+    RECOVERY_SDCARD_ON_DATA := true
+    BOARD_HAS_NO_REAL_SDCARD := false
+    TWHAVE_SELINUX := true
+    TW_EXCLUDE_DEFAULT_USB_INIT := true
+    TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
+    TW_EXTERNAL_STORAGE_PATH := "/external_sd"
+    TW_FLASH_FROM_STORAGE := true
+    TW_HAS_DOWNLOAD_MODE := true
+    TW_INCLUDE_CRYPTO := true
+    TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+    TW_INTERNAL_STORAGE_PATH := "/data/media"
+    TW_MAX_BRIGHTNESS := 255
+    TW_NO_CPU_TEMP := true
+    TW_NO_REBOOT_BOOTLOADER := true
+    TW_THEME := landscape_hdpi
+    TW_USE_TOOLBOX := false
+endif

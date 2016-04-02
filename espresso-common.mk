@@ -38,7 +38,9 @@ PRODUCT_PACKAGES += \
 
 # Recovery Ramdisk
 PRODUCT_PACKAGES += \
-    init.recovery.espresso.rc
+    init.recovery.espresso.rc \
+    init.recovery.usb.rc \
+    twrp.fstab
 
 # GPS
 # gps config appropriate for this device
