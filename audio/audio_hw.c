@@ -220,25 +220,19 @@ static int set_bigroute_by_array(struct mixer *mixer, struct route_setting *rout
     i = 0;
     while (route[i].ctl_name) {
         ctl = mixer_get_ctl_by_name(mixer, route[i].ctl_name);
-        if (!ctl) {
-        ALOGE("Unknown control '%s'\n", route[i].ctl_name);
+        if (!ctl)
             return -EINVAL;
-        }
 
         if (route[i].strval) {
             if (enable) {
                 ret = mixer_ctl_set_enum_by_string(ctl, route[i].strval);
                 if (ret != 0) {
                     ALOGE("Failed to set '%s' to '%s'\n", route[i].ctl_name, route[i].strval);
-                } else {
-                    ALOGV("Set '%s' to '%s'\n", route[i].ctl_name, route[i].strval);
                 }
             } else {
                 ret = mixer_ctl_set_enum_by_string(ctl, "Off");
                 if (ret != 0) {
                     ALOGE("Failed to set '%s' to '%s'\n", route[i].ctl_name, route[i].strval);
-                } else {
-                    ALOGV("Set '%s' to '%s'\n", route[i].ctl_name, "Off");
                 }
             }
         } else {
@@ -248,15 +242,11 @@ static int set_bigroute_by_array(struct mixer *mixer, struct route_setting *rout
                     ret = mixer_ctl_set_value(ctl, j, route[i].intval);
                     if (ret != 0) {
                         ALOGE("Failed to set '%s' to '%d'\n", route[i].ctl_name, route[i].intval);
-                    } else {
-                        ALOGV("Set '%s' to '%d'\n", route[i].ctl_name, route[i].intval);
                     }
                 } else {
                     ret = mixer_ctl_set_value(ctl, j, 0);
                     if (ret != 0) {
                         ALOGE("Failed to set '%s' to '%d'\n", route[i].ctl_name, route[i].intval);
-                    } else {
-                        ALOGV("Set '%s' to '%d'\n", route[i].ctl_name, 0);
                     }
                 }
             }
@@ -278,33 +268,23 @@ static int set_route_by_array(struct mixer *mixer, struct route_setting *route,
     /* Go through the route array and set each value */
     for (i = 0; i < len; i++) {
         ctl = mixer_get_ctl_by_name(mixer, route[i].ctl_name);
-        if (!ctl) {
-        ALOGE("Unknown control '%s'\n", route[i].ctl_name);
+        if (!ctl)
             return -EINVAL;
-        }
 
         if (route[i].strval) {
-        ret = mixer_ctl_set_enum_by_string(ctl, route[i].strval);
-        if (ret != 0) {
-        ALOGE("Failed to set '%s' to '%s'\n",
-             route[i].ctl_name, route[i].strval);
-        } else {
-        ALOGV("Set '%s' to '%s'\n",
-             route[i].ctl_name, route[i].strval);
-        }
-
+            ret = mixer_ctl_set_enum_by_string(ctl, route[i].strval);
+            if (ret != 0)
+                ALOGE("Failed to set '%s' to '%s'\n",
+                        route[i].ctl_name, route[i].strval);
         } else {
             /* This ensures multiple (i.e. stereo) values are set jointly */
             for (j = 0; j < mixer_ctl_get_num_values(ctl); j++) {
-        ret = mixer_ctl_set_value(ctl, j, route[i].intval);
-        if (ret != 0) {
-            ALOGE("Failed to set '%s'.%d to %d\n",
-             route[i].ctl_name, j, route[i].intval);
-        } else {
-            ALOGV("Set '%s'.%d to %d\n",
-             route[i].ctl_name, j, route[i].intval);
-        }
-        }
+                ret = mixer_ctl_set_value(ctl, j, route[i].intval);
+                if (ret != 0) {
+                    ALOGE("Failed to set '%s'.%d to %d\n",
+                            route[i].ctl_name, j, route[i].intval);
+                }
+            }
         }
     }
 
@@ -318,9 +298,6 @@ void select_devices(struct espresso_audio_device *adev)
 
     if (adev->active_out_device == adev->out_device && adev->active_in_device == adev->in_device)
     return;
-
-    ALOGV("Changing output device %x => %x\n", adev->active_out_device, adev->out_device);
-    ALOGV("Changing input device %x => %x\n", adev->active_in_device, adev->in_device);
 
     /* Turn on new devices first so we don't glitch due to powerdown... */
     for (i = 0; i < adev->num_dev_cfgs; i++)
@@ -354,7 +331,6 @@ void select_devices(struct espresso_audio_device *adev)
 
 static int start_call(struct espresso_audio_device *adev)
 {
-    ALOGV("Opening modem PCMs");
     int bt_on;
 
     bt_on = adev->out_device & AUDIO_DEVICE_OUT_ALL_SCO;
@@ -362,7 +338,6 @@ static int start_call(struct espresso_audio_device *adev)
 
     /* Open modem PCM channels */
     if (adev->pcm_modem_dl == NULL) {
-        ALOGD("Opening PCM modem DL stream");
         adev->pcm_modem_dl = pcm_open(CARD_DEFAULT, PORT_MODEM, PCM_OUT, &pcm_config_vx);
         if (!pcm_is_ready(adev->pcm_modem_dl)) {
             ALOGE("cannot open PCM modem DL stream: %s", pcm_get_error(adev->pcm_modem_dl));
@@ -371,7 +346,6 @@ static int start_call(struct espresso_audio_device *adev)
     }
 
     if (adev->pcm_modem_ul == NULL) {
-        ALOGD("Opening PCM modem UL stream");
         adev->pcm_modem_ul = pcm_open(CARD_DEFAULT, PORT_MODEM, PCM_IN, &pcm_config_vx);
         if (!pcm_is_ready(adev->pcm_modem_ul)) {
             ALOGE("cannot open PCM modem UL stream: %s", pcm_get_error(adev->pcm_modem_ul));
@@ -379,16 +353,13 @@ static int start_call(struct espresso_audio_device *adev)
         }
     }
 
-    ALOGD("Starting PCM modem streams");
     pcm_start(adev->pcm_modem_dl);
     pcm_start(adev->pcm_modem_ul);
 
     /* Open bluetooth PCM channels */
     if (bt_on) {
-        ALOGV("Opening bluetooth PCMs");
 
         if (adev->pcm_bt_dl == NULL) {
-            ALOGD("Opening PCM bluetooth DL stream");
             adev->pcm_bt_dl = pcm_open(CARD_DEFAULT, PORT_BT, PCM_OUT, &pcm_config_vx);
             if (!pcm_is_ready(adev->pcm_bt_dl)) {
                 ALOGE("cannot open PCM bluetooth DL stream: %s", pcm_get_error(adev->pcm_bt_dl));
@@ -397,14 +368,12 @@ static int start_call(struct espresso_audio_device *adev)
         }
 
         if (adev->pcm_bt_ul == NULL) {
-            ALOGD("Opening PCM bluetooth UL stream");
             adev->pcm_bt_ul = pcm_open(CARD_DEFAULT, PORT_BT, PCM_IN, &pcm_config_vx);
             if (!pcm_is_ready(adev->pcm_bt_ul)) {
                 ALOGE("cannot open PCM bluetooth UL stream: %s", pcm_get_error(adev->pcm_bt_ul));
                 goto err_open_ul;
             }
         }
-        ALOGD("Starting PCM bluetooth streams");
         pcm_start(adev->pcm_bt_dl);
         pcm_start(adev->pcm_bt_ul);
     }
@@ -431,15 +400,11 @@ static void end_call(struct espresso_audio_device *adev)
     bt_on = adev->out_device & AUDIO_DEVICE_OUT_ALL_SCO;
 
     if (adev->pcm_modem_dl != NULL) {
-        ALOGD("Stopping modem DL PCM");
         pcm_stop(adev->pcm_modem_dl);
-        ALOGV("Closing modem DL PCM");
         pcm_close(adev->pcm_modem_dl);
     }
     if (adev->pcm_modem_ul != NULL) {
-        ALOGD("Stopping modem UL PCM");
         pcm_stop(adev->pcm_modem_ul);
-        ALOGV("Closing modem UL PCM");
         pcm_close(adev->pcm_modem_ul);
     }
     adev->pcm_modem_dl = NULL;
@@ -447,15 +412,11 @@ static void end_call(struct espresso_audio_device *adev)
 
     if (bt_on) {
         if (adev->pcm_bt_dl != NULL) {
-            ALOGD("Stopping bluetooth DL PCM");
             pcm_stop(adev->pcm_bt_dl);
-            ALOGV("Closing bluetooth DL PCM");
             pcm_close(adev->pcm_bt_dl);
         }
         if (adev->pcm_bt_ul != NULL) {
-            ALOGD("Stopping bluetooth UL PCM");
             pcm_stop(adev->pcm_bt_ul);
-            ALOGV("Closing bluetooth UL PCM");
             pcm_close(adev->pcm_bt_ul);
         }
     }
@@ -616,42 +577,6 @@ static void select_output_device(struct espresso_audio_device *adev)
     earpiece_on = adev->out_device & AUDIO_DEVICE_OUT_EARPIECE;
     bt_on = adev->out_device & AUDIO_DEVICE_OUT_ALL_SCO;
 
-    switch(adev->out_device) {
-        case AUDIO_DEVICE_OUT_SPEAKER:
-            ALOGD("%s: AUDIO_DEVICE_OUT_SPEAKER", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_WIRED_HEADSET:
-            ALOGD("%s: AUDIO_DEVICE_OUT_WIRED_HEADSET", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_WIRED_HEADPHONE:
-            ALOGD("%s: AUDIO_DEVICE_OUT_WIRED_HEADPHONE", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_EARPIECE:
-            ALOGD("%s: AUDIO_DEVICE_OUT_EARPIECE", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET:
-            ALOGD("%s: AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET:
-            ALOGD("%s: AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_AUX_DIGITAL:
-            ALOGD("%s: AUDIO_DEVICE_OUT_AUX_DIGITAL", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_ALL_SCO:
-            ALOGD("%s: AUDIO_DEVICE_OUT_ALL_SCO", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_USB_ACCESSORY:
-            ALOGD("%s: AUDIO_DEVICE_OUT_USB_ACCESSORY", __func__);
-            break;
-        case AUDIO_DEVICE_OUT_USB_DEVICE:
-            ALOGD("%s: AUDIO_DEVICE_OUT_USB_DEVICE", __func__);
-            break;
-        default:
-            ALOGD("%s: AUDIO_DEVICE_OUT_ALL", __func__);
-            break;
-    }
-
     select_devices(adev);
 
 	set_eq_filter(adev);
@@ -682,26 +607,20 @@ static void select_output_device(struct espresso_audio_device *adev)
         }
 
         if (headset_on || headphone_on || speaker_on || earpiece_on) {
-            ALOGD("%s: set voicecall route: voicecall_default", __func__);
             set_bigroute_by_array(adev->mixer, voicecall_default, 1);
         } else {
-            ALOGD("%s: set voicecall route: voicecall_default_disable", __func__);
             set_bigroute_by_array(adev->mixer, voicecall_default_disable, 1);
         }
 
         if (speaker_on || earpiece_on || headphone_on) {
-            ALOGD("%s: set voicecall route: default_input", __func__);
             set_bigroute_by_array(adev->mixer, default_input, 1);
         } else {
-            ALOGD("%s: set voicecall route: default_input_disable", __func__);
             set_bigroute_by_array(adev->mixer, default_input_disable, 1);
         }
 
         if (headset_on) {
-            ALOGD("%s: set voicecall route: headset_input", __func__);
             set_bigroute_by_array(adev->mixer, headset_input, 1);
         } else {
-            ALOGD("%s: set voicecall route: headset_input_disable", __func__);
             set_bigroute_by_array(adev->mixer, headset_input_disable, 1);
         }
 
@@ -709,14 +628,10 @@ static void select_output_device(struct espresso_audio_device *adev)
             // bt uses a different port (PORT_BT) for playback, reopen the pcms
             end_call(adev);
             start_call(adev);
-            ALOGD("%s: set voicecall route: bt_input", __func__);
             set_bigroute_by_array(adev->mixer, bt_input, 1);
-            ALOGD("%s: set voicecall route: bt_output", __func__);
             set_bigroute_by_array(adev->mixer, bt_output, 1);
         } else {
-            ALOGD("%s: set voicecall route: bt_input_disable", __func__);
             set_bigroute_by_array(adev->mixer, bt_input_disable, 1);
-            ALOGD("%s: set voicecall route: bt_output_disable", __func__);
             set_bigroute_by_array(adev->mixer, bt_output_disable, 1);
         }
         set_incall_device(adev);
@@ -725,24 +640,6 @@ static void select_output_device(struct espresso_audio_device *adev)
 
 static void select_input_device(struct espresso_audio_device *adev)
 {
-    switch(adev->in_device) {
-        case AUDIO_DEVICE_IN_BUILTIN_MIC:
-            ALOGD("%s: AUDIO_DEVICE_IN_BUILTIN_MIC", __func__);
-            break;
-        case AUDIO_DEVICE_IN_BACK_MIC:
-            ALOGD("%s: AUDIO_DEVICE_IN_BACK_MIC", __func__);
-            break;
-        case AUDIO_DEVICE_IN_WIRED_HEADSET:
-            ALOGD("%s: AUDIO_DEVICE_IN_WIRED_HEADSET", __func__);
-            break;
-        case AUDIO_DEVICE_IN_ALL_SCO:
-            ALOGD("%s: AUDIO_DEVICE_IN_ALL_SCO", __func__);
-            break;
-        default:
-            ALOGD("%s: AUDIO_DEVICE_IN_DEFAULT", __func__);
-            break;
-    }
-
     select_devices(adev);
 }
 
@@ -955,8 +852,6 @@ static int get_playback_delay(struct espresso_stream_out *out,
         buffer->time_stamp.tv_sec  = 0;
         buffer->time_stamp.tv_nsec = 0;
         buffer->delay_ns           = 0;
-        ALOGV("%s: pcm_get_htimestamp error,"
-                "setting playbackTimestamp to 0", __func__);
         return status;
     }
 
@@ -1454,9 +1349,6 @@ static int start_input_stream(struct espresso_stream_in *in)
                                &in->buf_provider,
                                &in->resampler);
         }
-        ALOGV("%s: New channel configuration, "
-                "main_channels = [%04x], aux_channels = [%04x], config.channels = %d",
-                __func__, in->main_channels, in->aux_channels, in->config.channels);
     }
 
     if (in->need_echo_reference && in->echo_reference == NULL)
@@ -1668,12 +1560,6 @@ static void get_capture_delay(struct espresso_stream_in *in,
 
     buffer->time_stamp = tstamp;
     buffer->delay_ns   = delay_ns;
-    ALOGV("%s: time_stamp = [%ld].[%ld], delay_ns: [%d],"
-         " kernel_delay:[%ld], buf_delay:[%ld], rsmp_delay:[%ld], kernel_frames:[%d], "
-         "in->read_buf_frames:[%d], in->proc_buf_frames:[%d], frames:[%d]",
-         __func__, buffer->time_stamp.tv_sec , buffer->time_stamp.tv_nsec, buffer->delay_ns,
-         kernel_delay, buf_delay, rsmp_delay, kernel_frames,
-         in->read_buf_frames, in->proc_buf_frames, frames);
 
 }
 
@@ -1682,17 +1568,12 @@ static int32_t update_echo_reference(struct espresso_stream_in *in, size_t frame
     struct echo_reference_buffer b;
     b.delay_ns = 0;
 
-    ALOGV("%s: frames = [%d], in->ref_frames_in = [%d],  "
-          "b.frame_count = [%d]",
-         __func__, frames, in->ref_buf_frames, frames - in->ref_buf_frames);
     if (in->ref_buf_frames < frames) {
         if (in->ref_buf_size < frames) {
             in->ref_buf_size = frames;
             in->ref_buf = (int16_t *)realloc(in->ref_buf, pcm_frames_to_bytes(in->pcm, frames));
             ALOG_ASSERT((in->ref_buf != NULL),
                         "%s failed to reallocate ref_buf", __func__);
-            ALOGV("%s: ref_buf %p extended to %d bytes",
-                      __func__, in->ref_buf, pcm_frames_to_bytes(in->pcm, frames));
         }
         b.frame_count = frames - in->ref_buf_frames;
         b.raw = (void *)(in->ref_buf + in->ref_buf_frames * in->config.channels);
@@ -1702,12 +1583,9 @@ static int32_t update_echo_reference(struct espresso_stream_in *in, size_t frame
         if (in->echo_reference->read(in->echo_reference, &b) == 0)
         {
             in->ref_buf_frames += b.frame_count;
-            ALOGD("%s: in->ref_buf_frames:[%d], "
-                    "in->ref_buf_size:[%d], frames:[%d], b.frame_count:[%d]",
-                 __func__, in->ref_buf_frames, in->ref_buf_size, frames, b.frame_count);
         }
-    } else
-        ALOGW("%s: NOT enough frames to read ref buffer", __func__);
+    }
+
     return b.delay_ns;
 }
 
@@ -1801,8 +1679,6 @@ static int get_next_buffer(struct resampler_buffer_provider *buffer_provider,
             in->read_buf = (int16_t *) realloc(in->read_buf, size_in_bytes);
             ALOG_ASSERT((in->read_buf != NULL),
                         "%s failed to reallocate read_buf", __func__);
-            ALOGV("%s: read_buf %p extended to %d bytes",
-                  __func__, in->read_buf, size_in_bytes);
         }
 
         in->read_status = pcm_read(in->pcm, (void*)in->read_buf, size_in_bytes);
@@ -1915,8 +1791,6 @@ static ssize_t process_frames(struct espresso_stream_in *in, void* buffer, ssize
                                 "%s failed to reallocate proc_buf_out", __func__);
                     proc_buf_out = in->proc_buf_out;
                 }
-                ALOGV("process_frames(): proc_buf_in %p extended to %d bytes",
-                     in->proc_buf_in, size_in_bytes);
             }
             frames_rd = read_frames(in,
                                     in->proc_buf_in +
@@ -2362,8 +2236,6 @@ static int in_add_audio_effect(const struct audio_stream *stream,
     /* check compatibility between main channel supported and possible auxiliary channels */
     in_update_aux_channels(in, effect);
 
-    ALOGV("%s: effect type: %08x", __func__, desc.type.timeLow);
-
     if (memcmp(&desc.type, FX_IID_AEC, sizeof(effect_uuid_t)) == 0) {
         in->need_echo_reference = true;
         do_input_standby(in);
@@ -2425,8 +2297,6 @@ static int in_remove_audio_effect(const struct audio_stream *stream,
     if (status != 0)
         goto exit;
 
-    ALOGV("%s: effect type: %08x", __func__, desc.type.timeLow);
-
     if (memcmp(&desc.type, FX_IID_AEC, sizeof(effect_uuid_t)) == 0) {
         in->need_echo_reference = false;
         do_input_standby(in);
@@ -2466,7 +2336,6 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
 
     if (ladev->outputs[OUTPUT_DEEP_BUF] != NULL) {
         ret = -ENOSYS;
-        ALOGW("%s: output not available!", __func__);
         goto err_open;
     }
     output_type = OUTPUT_DEEP_BUF;
@@ -2871,7 +2740,6 @@ static void adev_config_start(void *data, const XML_Char *elem,
 
     for (i = 0; i < sizeof(dev_names) / sizeof(dev_names[0]); i++) {
         if (strcmp(dev_names[i].name, name) == 0) {
-        ALOGI("Allocating device %s\n", name);
         dev_cfg = realloc(s->adev->dev_cfgs,
                   (s->adev->num_dev_cfgs + 1)
                   * sizeof(*dev_cfg));
@@ -2922,8 +2790,6 @@ static void adev_config_start(void *data, const XML_Char *elem,
         return;
     }
 
-    ALOGV("Parsing control %s => %s\n", name, val);
-
     r = realloc(s->path, sizeof(*r) * (s->path_len + 1));
     if (!r) {
         ALOGE("Out of memory handling %s => %s\n", name, val);
@@ -2949,42 +2815,27 @@ static void adev_config_end(void *data, const XML_Char *name)
     unsigned int i;
 
     if (strcmp(name, "path") == 0) {
-    if (!s->path_len)
-        ALOGW("Empty path\n");
-
-    if (!s->dev) {
-        ALOGV("Applying %d element default route\n", s->path_len);
-
-        set_route_by_array(s->adev->mixer, s->path, s->path_len);
-
-        for (i = 0; i < s->path_len; i++) {
-        free(s->path[i].ctl_name);
-        free(s->path[i].strval);
-        }
-
-        free(s->path);
-
+        if (!s->dev) {
+            set_route_by_array(s->adev->mixer, s->path, s->path_len);
+            for (i = 0; i < s->path_len; i++) {
+                free(s->path[i].ctl_name);
+                free(s->path[i].strval);
+            }
+            free(s->path);
         /* Refactor! */
-    } else if (s->on) {
-        ALOGV("%d element on sequence\n", s->path_len);
-        s->dev->on = s->path;
-        s->dev->on_len = s->path_len;
-
-    } else {
-        ALOGV("%d element off sequence\n", s->path_len);
-
-        /* Apply it, we'll reenable anything that's wanted later */
-        set_route_by_array(s->adev->mixer, s->path, s->path_len);
-
-        s->dev->off = s->path;
-        s->dev->off_len = s->path_len;
-    }
-
-    s->path_len = 0;
-    s->path = NULL;
-
+        } else if (s->on) {
+            s->dev->on = s->path;
+            s->dev->on_len = s->path_len;
+        } else {
+            /* Apply it, we'll reenable anything that's wanted later */
+            set_route_by_array(s->adev->mixer, s->path, s->path_len);
+            s->dev->off = s->path;
+            s->dev->off_len = s->path_len;
+        }
+        s->path_len = 0;
+        s->path = NULL;
     } else if (strcmp(name, "device") == 0) {
-    s->dev = NULL;
+        s->dev = NULL;
     }
 }
 
@@ -3011,18 +2862,17 @@ static int adev_config_parse(struct espresso_audio_device *adev)
     fclose(f);
     snprintf(file, sizeof(file), "/system/etc/sound/%s", device);
 
-    ALOGV("Reading configuration from %s\n", file);
     f = fopen(file, "r");
     if (!f) {
-    ALOGE("Failed to open %s\n", file);
-    return -ENODEV;
+        ALOGE("Failed to open %s\n", file);
+        return -ENODEV;
     }
 
     p = XML_ParserCreate(NULL);
     if (!p) {
-    ALOGE("Failed to create XML parser\n");
-    ret = -ENOMEM;
-    goto out;
+        ALOGE("Failed to create XML parser\n");
+        ret = -ENOMEM;
+        goto out;
     }
 
     memset(&s, 0, sizeof(s));
@@ -3042,8 +2892,8 @@ static int adev_config_parse(struct espresso_audio_device *adev)
 
     if (XML_Parse(p, file, len, eof) == XML_STATUS_ERROR) {
         ALOGE("Parse error at line %u:\n%s\n",
-         (unsigned int)XML_GetCurrentLineNumber(p),
-         XML_ErrorString(XML_GetErrorCode(p)));
+            (unsigned int)XML_GetCurrentLineNumber(p),
+            XML_ErrorString(XML_GetErrorCode(p)));
         ret = -EINVAL;
         goto out_parser;
     }

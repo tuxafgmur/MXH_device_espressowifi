@@ -46,8 +46,6 @@ int bh1721_init(struct piranha_sensors_handlers *handlers,
 	int input_fd = -1;
 	int rc;
 
-	ALOGD("%s(%p, %p)", __func__, handlers, device);
-
 	if (handlers == NULL)
 		return -EINVAL;
 
@@ -88,8 +86,6 @@ error:
 
 int bh1721_deinit(struct piranha_sensors_handlers *handlers)
 {
-	ALOGD("%s(%p)", __func__, handlers);
-
 	if (handlers == NULL)
 		return -EINVAL;
 
@@ -108,8 +104,6 @@ int bh1721_activate(struct piranha_sensors_handlers *handlers)
 {
 	struct bh1721_data *data;
 	int rc;
-
-	ALOGD("%s(%p)", __func__, handlers);
 
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
@@ -132,8 +126,6 @@ int bh1721_deactivate(struct piranha_sensors_handlers *handlers)
 	struct bh1721_data *data;
 	int rc;
 
-	ALOGD("%s(%p)", __func__, handlers);
-
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
 
@@ -154,8 +146,6 @@ int bh1721_set_delay(struct piranha_sensors_handlers *handlers, int64_t delay)
 {
 	struct bh1721_data *data;
 	int rc;
-
-	ALOGD("%s(%p, %" PRId64 ")", __func__, handlers, delay);
 
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
@@ -182,8 +172,6 @@ int bh1721_get_data(struct piranha_sensors_handlers *handlers,
 	struct input_event input_event;
 	int input_fd;
 	int rc;
-
-//	ALOGD("%s(%p, %p)", __func__, handlers, event);
 
 	if (handlers == NULL || event == NULL)
 		return -EINVAL;

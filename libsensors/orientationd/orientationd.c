@@ -193,8 +193,6 @@ int orientationd_poll(struct orientationd_data *data)
 	if (data == NULL)
 		return -EINVAL;
 
-	ALOGD("Starting orientationd poll");
-
 	while (1) {
 		if (data->activated)
 			count = data->poll_fds_count;

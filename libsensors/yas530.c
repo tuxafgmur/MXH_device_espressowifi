@@ -48,8 +48,6 @@ int yas530_init(struct piranha_sensors_handlers *handlers,
 	int input_fd = -1;
 	int rc;
 
-	ALOGD("%s(%p, %p)", __func__, handlers, device);
-
 	if (handlers == NULL)
 		return -EINVAL;
 
@@ -90,8 +88,6 @@ error:
 
 int yas530_deinit(struct piranha_sensors_handlers *handlers)
 {
-	ALOGD("%s(%p)", __func__, handlers);
-
 	if (handlers == NULL)
 		return -EINVAL;
 
@@ -110,8 +106,6 @@ int yas530_activate(struct piranha_sensors_handlers *handlers)
 {
 	struct yas530_data *data;
 	int rc;
-
-	ALOGD("%s(%p)", __func__, handlers);
 
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
@@ -134,8 +128,6 @@ int yas530_deactivate(struct piranha_sensors_handlers *handlers)
 	struct yas530_data *data;
 	int rc;
 
-	ALOGD("%s(%p)", __func__, handlers);
-
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
 
@@ -156,8 +148,6 @@ int yas530_set_delay(struct piranha_sensors_handlers *handlers, int64_t delay)
 {
 	struct yas530_data *data;
 	int rc;
-
-	ALOGD("%s(%p, %" PRId64 ")", __func__, handlers, delay);
 
 	if (handlers == NULL || handlers->data == NULL)
 		return -EINVAL;
@@ -190,8 +180,6 @@ int yas530_get_data(struct piranha_sensors_handlers *handlers,
 	struct input_event input_event;
 	int input_fd;
 	int rc;
-
-//	ALOGD("%s(%p, %p)", __func__, handlers, event);
 
 	if (handlers == NULL || handlers->data == NULL || event == NULL)
 		return -EINVAL;

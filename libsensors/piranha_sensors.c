@@ -96,8 +96,6 @@ int piranha_sensors_activate(struct sensors_poll_device_t *dev, int handle,
 	struct piranha_sensors_device *device;
 	int i;
 
-	ALOGD("%s(%p, %d, %d)", __func__, dev, handle, enabled);
-
 	if (dev == NULL)
 		return -EINVAL;
 
@@ -136,8 +134,6 @@ int piranha_sensors_set_delay(struct sensors_poll_device_t *dev, int handle,
 	struct piranha_sensors_device *device;
 	int i;
 
-	ALOGD("%s(%p, %d, %" PRId64 ")", __func__, dev, handle, ns);
-
 	if (dev == NULL)
 		return -EINVAL;
 
@@ -164,8 +160,6 @@ int piranha_sensors_poll(struct sensors_poll_device_t *dev,
 	int i, j;
 	int c, n;
 	int poll_rc, rc;
-
-//	ALOGD("%s(%p, %p, %d)", __func__, dev, data, count);
 
 	if (dev == NULL)
 		return -EINVAL;
@@ -215,8 +209,6 @@ int piranha_sensors_close(hw_device_t *device)
 	struct piranha_sensors_device *piranha_sensors_device;
 	int i;
 
-	ALOGD("%s(%p)", __func__, device);
-
 	if (device == NULL)
 		return -EINVAL;
 
@@ -249,8 +241,6 @@ void piranha_sensors_setup() {
 	}
 	if (f) fclose(f);
 
-	ALOGD("Device: %s", device);
-
 	if (strcmp(device, "espresso10") == 0) {
 		/* Device is P51xx */
 		piranha_sensors_count = 4;
@@ -278,8 +268,6 @@ int piranha_sensors_open(const struct hw_module_t* module, const char *id,
 {
 	struct piranha_sensors_device *piranha_sensors_device;
 	int p, i;
-
-	ALOGD("%s(%p, %s, %p)", __func__, module, id, device);
 
 	if (module == NULL || device == NULL)
 		return -EINVAL;
@@ -323,8 +311,6 @@ int piranha_sensors_open(const struct hw_module_t* module, const char *id,
 int piranha_sensors_get_sensors_list(struct sensors_module_t* module,
 	const struct sensor_t **sensors_p)
 {
-	ALOGD("%s(%p, %p)", __func__, module, sensors_p);
-
 	if (sensors_p == NULL)
 		return -EINVAL;
 
