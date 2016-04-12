@@ -12,8 +12,6 @@ on early-init
 
     restorecon /adb_keys
 
-    mount debugfs /sys/kernel/debug /sys/kernel/debug mode=755
-
     start ueventd
 
 on init
@@ -21,7 +19,6 @@ on init
     loglevel 3
 
     symlink /system/etc /etc
-    symlink /sys/kernel/debug /d
     symlink /system/vendor /vendor
 
     mkdir /acct
@@ -35,7 +32,7 @@ on init
     chown root system /sys/fs/cgroup/memory/tasks
     chmod 0660 /sys/fs/cgroup/memory/tasks
     mkdir /sys/fs/cgroup/memory/sw 0750 root system
-    write /sys/fs/cgroup/memory/sw/memory.swappiness 40
+    write /sys/fs/cgroup/memory/sw/memory.swappiness 100
     write /sys/fs/cgroup/memory/sw/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/sw/tasks
     chmod 0660 /sys/fs/cgroup/memory/sw/tasks
@@ -44,7 +41,6 @@ on init
     mkdir /system
     mkdir /data 0771 system system
     mkdir /cache 0770 system cache
-    mkdir /config 0500 root root
 
     mkdir /mnt 0755 root system
     mount tmpfs tmpfs /mnt mode=0755,uid=0,gid=1000
@@ -297,11 +293,6 @@ on boot
     chown root system /sys/module/lowmemorykiller/parameters/minfree
     chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
 
-    write /proc/sys/vm/dirty_writeback_centisecs 1500
-    write /proc/sys/vm/dirty_expire_centisecs 1000
-    write /proc/sys/vm/dirty_ratio 30
-    write /proc/sys/vm/dirty_background_ratio 10
-    
     chown system system /sys/power/state
     chown system system /sys/power/wakeup_count
     chown radio system  /sys/power/wake_lock
