@@ -23,6 +23,8 @@ rm -f  $WSYSTEMDIR/xbin/{ls,ps}
 [ -e $WSYSTEMDIR/xbin/fstrim ] || ln -s ./busybox $WSYSTEMDIR/xbin/fstrim
 [ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s ./libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so
 
+cp   $ANDROID_BUILD_TOP/vendor/cm/prebuilt/common/fonts/NotoColorEmoji.ttf  $WSYSTEMDIR/fonts/
+
 FirstSortLine=`grep -n 'Additional Build Properties' $WSYSTEMDIR/build.prop | cut -d: -f1`
 LastSortLine=`wc -l $WSYSTEMDIR/build.prop | cut -d ' ' -f1`
 head -n $FirstSortLine $WSYSTEMDIR/build.prop > $WSYSTEMDIR/build.new
