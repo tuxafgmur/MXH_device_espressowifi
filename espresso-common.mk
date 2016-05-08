@@ -42,6 +42,11 @@ PRODUCT_PACKAGES += \
     init.recovery.usb.rc \
     twrp.fstab
 
+# Boot config
+PRODUCT_PACKAGES += \
+    10-Config \
+    sysctl.conf
+
 # GPS
 # gps config appropriate for this device
 $(call inherit-product, device/common/gps/gps_us_supl.mk)

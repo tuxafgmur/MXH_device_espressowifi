@@ -3,7 +3,6 @@
 import /init.environ.rc
 import /init.usb.rc
 import /init.espresso.rc
-import /init.usb.configfs.rc
 import /init.${ro.zygote}.rc
 import /init.rom.rc
 
@@ -32,15 +31,10 @@ on init
     chown root system /sys/fs/cgroup/memory/tasks
     chmod 0660 /sys/fs/cgroup/memory/tasks
     mkdir /sys/fs/cgroup/memory/sw 0750 root system
-    write /sys/fs/cgroup/memory/sw/memory.swappiness 100
     write /sys/fs/cgroup/memory/sw/memory.move_charge_at_immigrate 1
     chown root system /sys/fs/cgroup/memory/sw/tasks
     chmod 0660 /sys/fs/cgroup/memory/sw/tasks
     chmod 0220 /sys/fs/cgroup/memory/cgroup.event_control
-
-    mkdir /system
-    mkdir /data 0771 system system
-    mkdir /cache 0770 system cache
 
     mkdir /mnt 0755 root system
     mount tmpfs tmpfs /mnt mode=0755,uid=0,gid=1000
@@ -72,20 +66,6 @@ on init
 
     write /proc/cpu/alignment 4
 
-    write /proc/sys/kernel/panic_on_oops 1
-    write /proc/sys/kernel/sched_rt_runtime_us 950000
-    write /proc/sys/kernel/sched_rt_period_us 1000000
-    write /proc/sys/kernel/randomize_va_space 2
-    write /proc/sys/kernel/kptr_restrict 2
-
-    write /proc/sys/vm/mmap_min_addr 32768
-
-    write /proc/sys/net/ipv4/ping_group_range "0 2147483647"
-    write /proc/sys/net/unix/max_dgram_qlen 300
-
-    write /proc/sys/net/ipv4/conf/all/accept_redirects 0
-    write /proc/sys/net/ipv6/conf/all/accept_redirects 0
-
     mkdir /dev/cpuctl
     mount cgroup none /dev/cpuctl cpu
     chown system system /dev/cpuctl
@@ -94,7 +74,7 @@ on init
     write /dev/cpuctl/cpu.shares 1024
     write /dev/cpuctl/cpu.rt_runtime_us 800000
     write /dev/cpuctl/cpu.rt_period_us 1000000
-
+    
     mkdir /dev/cpuctl/bg_non_interactive
     chown system system /dev/cpuctl/bg_non_interactive/tasks
     chmod 0666 /dev/cpuctl/bg_non_interactive/tasks
@@ -104,41 +84,39 @@ on init
 
     mkdir /dev/cpuset
     mount cpuset none /dev/cpuset
+    chown system system /dev/cpuset
+    chown system system /dev/cpuset/tasks
+    chmod 0664 /dev/cpuset/tasks
     mkdir /dev/cpuset/foreground
+    chown system system /dev/cpuset/foreground
+    chown system system /dev/cpuset/foreground/tasks
+    chmod 0664 /dev/cpuset/foreground/tasks
     write /dev/cpuset/foreground/cpus 0
     write /dev/cpuset/foreground/mems 0
     mkdir /dev/cpuset/foreground/boost
+    chown system system /dev/cpuset/foreground/boost
+    chown system system /dev/cpuset/foreground/boost/tasks
+    chmod 0664 /dev/cpuset/foreground/boost/tasks
     write /dev/cpuset/foreground/boost/cpus 0
     write /dev/cpuset/foreground/boost/mems 0
     mkdir /dev/cpuset/background
+    chmod 0775 /dev/cpuset/system-background
+    chown system system /dev/cpuset/background
+    chown system system /dev/cpuset/background/tasks
+    chmod 0664 /dev/cpuset/background/tasks
     write /dev/cpuset/background/cpus 0
     write /dev/cpuset/background/mems 0
     mkdir /dev/cpuset/system-background
+    chown system system /dev/cpuset/system-background
+    chown system system /dev/cpuset/system-background/tasks
+    chmod 0664 /dev/cpuset/system-background/tasks
     write /dev/cpuset/system-background/cpus 0
     write /dev/cpuset/system-background/mems 0
-
-    chown system system /dev/cpuset
-    chown system system /dev/cpuset/foreground
-    chown system system /dev/cpuset/foreground/boost
-    chown system system /dev/cpuset/background
-    chown system system /dev/cpuset/system-background
-    chown system system /dev/cpuset/tasks
-    chown system system /dev/cpuset/foreground/tasks
-    chown system system /dev/cpuset/foreground/boost/tasks
-    chown system system /dev/cpuset/background/tasks
-    chown system system /dev/cpuset/system-background/tasks
-
-    chmod 0775 /dev/cpuset/system-background
-    chmod 0664 /dev/cpuset/foreground/tasks
-    chmod 0664 /dev/cpuset/foreground/boost/tasks
-    chmod 0664 /dev/cpuset/background/tasks
-    chmod 0664 /dev/cpuset/system-background/tasks
-    chmod 0664 /dev/cpuset/tasks
 
     chown root net_bw_acct /proc/net/xt_qtaguid/ctrl
     chown root net_bw_stats /proc/net/xt_qtaguid/stats
     chmod 0644 /dev/xt_qtaguid
-
+    
     mkdir /dev/fscklogs 0770 root system
 
 on property:sys.boot_from_charger_mode=1
@@ -176,19 +154,16 @@ on post-fs
 
     chown system cache /cache
     chmod 0770 /cache
-    restorecon_recursive /cache
-
     mkdir /cache/recovery 0770 system cache
+    mkdir /cache/lost+found 0770 root root
+    restorecon_recursive /cache
 
     chown root log /proc/vmallocinfo
     chmod 0440 /proc/vmallocinfo
-
     chown root system /proc/kmsg
     chmod 0440 /proc/kmsg
 
     chmod 0444 /sys/fs/selinux/policy
-
-    mkdir /cache/lost+found 0770 root root
 
 on post-fs-data
     chown system system /data
@@ -197,85 +172,67 @@ on post-fs-data
 
     mkdir /data/media 0770 media_rw media_rw
 
-    start logd
     start vold
     installkey /data
 
-    #mkdir /data/bootchart 0755 shell shell
-    #bootchart_init
-
     copy /data/system/entropy.dat /dev/urandom
 
+    mkdir /data/adb 0700 root root
+    mkdir /data/app 0771 system system
+    mkdir /data/app-asec 0700 root root
+    mkdir /data/app-lib 0771 system system
+    mkdir /data/app-private 0771 system system
+    mkdir /data/backup 0700 system system
+    mkdir /data/dalvik-cache 0771 root root
+    mkdir /data/dalvik-cache/profiles 0711 system system
+    mkdir /data/data 0771 system system
+    mkdir /data/drm 0770 drm drm
+    mkdir /data/local 0751 root root
+    mkdir /data/local/tmp 0771 shell shell
+    mkdir /data/lost+found 0770 root root
+    mkdir /data/media 0770 media_rw media_rw
+    mkdir /data/mediadrm 0770 mediadrm mediadrm
     mkdir /data/misc 01771 system misc
     mkdir /data/misc/adb 02750 system shell
     mkdir /data/misc/bluedroid 02770 bluetooth net_bt_stack
-    chmod 0660 /data/misc/bluedroid/bt_config.conf
-    chown bluetooth net_bt_stack /data/misc/bluedroid/bt_config.conf
     mkdir /data/misc/bluetooth 0770 system system
-    mkdir /data/misc/keystore 0700 keystore keystore
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    mkdir /data/misc/ethernet 0770 system system
     mkdir /data/misc/gatekeeper 0700 system system
     mkdir /data/misc/keychain 0771 system system
+    mkdir /data/misc/keystore 0700 keystore keystore
+    mkdir /data/misc/media 0700 media media
     mkdir /data/misc/net 0750 root shell
+    mkdir /data/misc/perfprofd 0775 root root
     mkdir /data/misc/radio 0770 system radio
-    mkdir /data/misc/sms 0770 system radio
-    mkdir /data/misc/zoneinfo 0775 system system
-    mkdir /data/misc/vpn 0770 system vpn
     mkdir /data/misc/shared_relro 0771 shared_relro shared_relro
+    mkdir /data/misc/sms 0770 system radio
     mkdir /data/misc/systemkeys 0700 system system
+    mkdir /data/misc/user 0771 root root
+    mkdir /data/misc/vold 0700 root root
+    mkdir /data/misc/vpn 0770 system vpn
     mkdir /data/misc/wifi 0770 wifi wifi
     mkdir /data/misc/wifi/sockets 0770 wifi wifi
     mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
-    mkdir /data/misc/ethernet 0770 system system
-    mkdir /data/misc/dhcp 0770 dhcp dhcp
-    mkdir /data/misc/user 0771 root root
-    mkdir /data/misc/perfprofd 0775 root root
-    chmod 0660 /data/misc/wifi/wpa_supplicant.conf
-    mkdir /data/local 0751 root root
-    mkdir /data/misc/media 0700 media media
-    mkdir /data/misc/vold 0700 root root
-    mkdir /data/local/tmp 0771 shell shell
-    mkdir /data/data 0771 system system
-    mkdir /data/app-private 0771 system system
-    mkdir /data/app-asec 0700 root root
-    mkdir /data/app-lib 0771 system system
-    mkdir /data/app 0771 system system
+    mkdir /data/misc/zoneinfo 0775 system system
     mkdir /data/property 0700 root root
-    mkdir /data/tombstones 0771 system system
-
-    mkdir /data/dalvik-cache 0771 root root
-    mkdir /data/dalvik-cache/profiles 0711 system system
-
     mkdir /data/resource-cache 0771 system system
-    chown system system /data/resource-cache
-    chmod 0771 /data/resource-cache
-
-    mkdir /data/lost+found 0770 root root
-
-    mkdir /data/drm 0770 drm drm
-
-    mkdir /data/mediadrm 0770 mediadrm mediadrm
-
-    mkdir /data/adb 0700 root root
-
-    #symlink /data/data/com.android.shell/files/bugreports /data/bugreports
-
     mkdir /data/security 0711 system system
-
-    mkdir /data/backup 0700 system system
-    mkdir /data/media 0770 media_rw media_rw
     mkdir /data/ss 0700 system system
     mkdir /data/system 0775 system system
     mkdir /data/system/heapdump 0700 system system
+    mkdir /data/tombstones 0771 system system
     mkdir /data/user 0711 system system
+
+    chown bluetooth.net_bt_stack /data/misc/bluedroid/bt_config.conf
+    chmod 0660 /data/misc/bluedroid/bt_config.conf
+    chmod 0660 /data/misc/wifi/wpa_supplicant.conf
 
     setusercryptopolicies /data/user
 
     setprop selinux.reload_policy 1
 
     restorecon_recursive /data
-    restorecon /data/data
-    restorecon /data/user
-    restorecon /data/user/0
 
     exec - system system -- /system/bin/tzdatacheck /system/usr/share/zoneinfo /data/misc/zoneinfo
 
@@ -286,32 +243,36 @@ on boot
 
     setrlimit 13 40 40
 
-    write /proc/sys/vm/overcommit_memory 1
-    write /proc/sys/vm/min_free_order_shift 4
+    chown root radio /proc/cmdline
+
     chown root system /sys/module/lowmemorykiller/parameters/adj
     chmod 0664 /sys/module/lowmemorykiller/parameters/adj
     chown root system /sys/module/lowmemorykiller/parameters/minfree
     chmod 0664 /sys/module/lowmemorykiller/parameters/minfree
 
     chown system system /sys/power/state
+    chmod 0660 /sys/power/state
     chown system system /sys/power/wakeup_count
     chown radio system  /sys/power/wake_lock
-    chown radio system  /sys/power/wake_unlock
-    chmod 0660 /sys/power/state
     chmod 0660 /sys/power/wake_lock
+    chown radio system  /sys/power/wake_unlock
     chmod 0660 /sys/power/wake_unlock
 
     chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
     chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    chmod 0660 /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
     chown system system /sys/class/timed_output/vibrator/enable
-    chown system system /sys/kernel/ipv4/tcp_wmem_min
+
     chown system system /sys/kernel/ipv4/tcp_wmem_def
     chown system system /sys/kernel/ipv4/tcp_wmem_max
-    chown system system /sys/kernel/ipv4/tcp_rmem_min
+    chown system system /sys/kernel/ipv4/tcp_wmem_min
     chown system system /sys/kernel/ipv4/tcp_rmem_def
     chown system system /sys/kernel/ipv4/tcp_rmem_max
-    chown root radio /proc/cmdline
+    chown system system /sys/kernel/ipv4/tcp_rmem_min
 
     setprop net.tcp.default_init_rwnd 60
 
@@ -356,11 +317,8 @@ on property:vold.decrypt=trigger_shutdown_framework
 on property:sys.powerctl=*
     powerctl ${sys.powerctl}
 
-on property:sys.sysctl.extra_free_kbytes=*
-    write /proc/sys/vm/extra_free_kbytes ${sys.sysctl.extra_free_kbytes}
-
-on property:sys.sysctl.tcp_def_init_rwnd=*
-    write /proc/sys/net/ipv4/tcp_default_init_rwnd ${sys.sysctl.tcp_def_init_rwnd}
+on property:ro.debuggable=1
+    start console
 
 service ueventd /sbin/ueventd
     class core
@@ -393,9 +351,6 @@ service console /system/bin/sh
     user shell
     group shell log
     seclabel u:r:shell:s0
-
-on property:ro.debuggable=1
-    start console
 
 service adbd /sbin/adbd --root_seclabel=u:r:su:s0
     class core
@@ -535,16 +490,4 @@ service perfprofd /system/xbin/perfprofd
     class late_start
     user root
     oneshot
-    writepid /dev/cpuset/system-background/tasks
-
-on property:persist.logd.logpersistd=logcatd
-    mkdir /data/misc/logd 0700 logd log
-    exec - logd log -- /system/bin/logcat -L -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 1024 -n 256
-    start logcatd
-
-service logcatd /system/bin/logcat -b all -v threadtime -v usec -v printable -D -f /data/misc/logd/logcat -r 1024 -n 256
-    class late_start
-    disabled
-    user logd
-    group log
     writepid /dev/cpuset/system-background/tasks

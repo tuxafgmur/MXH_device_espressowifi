@@ -1,0 +1,20 @@
+#!/system/bin/sh
+# Tuxafgmur - Dhollmen 2016
+
+echo  1 >    /sys/block/mmcblk0/queue/iosched/fifo_batch
+echo  0 >    /sys/block/mmcblk0/queue/iostats
+echo  512 >  /sys/block/mmcblk0/queue/nr_requests
+echo  128 >  /sys/block/mmcblk0/queue/read_ahead_kb
+echo  0 >    /sys/block/mmcblk0/queue/rotational
+echo  1 >    /sys/block/mmcblk1/queue/iosched/fifo_batch
+echo  0 >    /sys/block/mmcblk1/queue/iostats
+echo  512 >  /sys/block/mmcblk1/queue/nr_requests
+echo  1024 > /sys/block/mmcblk1/queue/read_ahead_kb
+echo  0 >    /sys/block/mmcblk1/queue/rotational
+echo  512 >  /sys/block/zram0/queue/nr_requests
+echo  0 >    /sys/block/zram0/queue/rotational
+echo  50 >   /sys/fs/cgroup/memory/sw/memory.swappiness
+echo  64 >   /sys/module/lowmemorykiller/parameters/cost
+echo  0 >    /sys/module/lowmemorykiller/parameters/debug_level
+echo  "1024,2048,4096,8192,12288,16384" > /sys/module/lowmemorykiller/parameters/minfree
+
