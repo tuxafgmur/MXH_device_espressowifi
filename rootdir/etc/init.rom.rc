@@ -44,8 +44,8 @@ on post-fs-data
     mkdir /persist/properties 0770 system system
 
 on property:dev.bootcomplete=1
-    start sysinit
     start sysctl
+    start sysinit
     
 on property:adb.network.port=*
     setprop service.adb.tcp.port ${adb.network.port}
