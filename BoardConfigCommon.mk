@@ -94,15 +94,13 @@ BOARD_USE_LEGACY_SENSORS_FUSION := false
 BOARD_SEPOLICY_DIRS += device/samsung/espressowifi/sepolicy
 
 # Recovery
-RECOVERY_VARIANT := twrp
-
 BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
-TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-TARGET_RECOVERY_FSTAB := device/samsung/espressowifi/rootdir/etc/fstab.espresso
 BOARD_SUPPRESS_EMMC_WIPE := true
 BOARD_UMS_LUNFILE := "/sys/class/android_usb/f_mass_storage/lun0/file"
 RECOVERY_FSTAB_VERSION := 2
 TARGET_RECOVERY_DEVICE_DIRS += device/samsung/espressowifi
+TARGET_RECOVERY_FSTAB := device/samsung/espressowifi/rootdir/etc/fstab.espresso
+TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 
 ifneq ($(RECOVERY_VARIANT),twrp)
 # CM
