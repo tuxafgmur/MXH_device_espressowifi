@@ -28,7 +28,7 @@ $(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
 DEVICE_PACKAGE_OVERLAYS += device/samsung/espressowifi/overlay/cm-common
 
 # Inherit device configuration
-$(call inherit-product, device/samsung/espressowifi/aosp_espresso.mk)
+$(call inherit-product, device/samsung/espressowifi/aosp_espressowifi.mk)
 
 # Device identifier. This must come after all inclusions
 PRODUCT_NAME := cm_espressowifi
