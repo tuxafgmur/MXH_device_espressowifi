@@ -11,7 +11,6 @@ rm -f  $WSYSTEMDIR/etc/vimrc
 rm -fr $WSYSTEMDIR/etc/bash
 rm -fr $WSYSTEMDIR/etc/nano
 rm -fr $WSYSTEMDIR/etc/terminfo
-rm -f  $WSYSTEMDIR/etc/init.d/{00banner,90userinit}
 rm -f  $WSYSTEMDIR/lib/hw/power.*.so
 rm -f  $WSYSTEMDIR/lib/hw/audio.primary.default.so
 rm -fr $WSYSTEMDIR/usr/share/vim
@@ -24,7 +23,7 @@ rm -f  $WSYSTEMDIR/xbin/{ls,ps}
 [ -e $WSYSTEMDIR/xbin/fstrim ] || ln -s ./busybox $WSYSTEMDIR/xbin/fstrim
 [ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s ./libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so
 
-cp   $ANDROID_BUILD_TOP/vendor/cm/prebuilt/common/fonts/NotoColorEmoji.ttf  $WSYSTEMDIR/fonts/
+cp   $ANDROID_BUILD_TOP/vendor/xenonhd/proprietary/common/fonts/NotoColorEmoji.ttf  $WSYSTEMDIR/fonts/
 
 FirstSortLine=`grep -n 'Additional Build Properties' $WSYSTEMDIR/build.prop | cut -d: -f1`
 LastSortLine=`wc -l $WSYSTEMDIR/build.prop | cut -d ' ' -f1`

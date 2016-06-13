@@ -21,14 +21,12 @@ TARGET_SCREEN_WIDTH := 600
 # Device have its own init.rc
 TARGET_PROVIDES_INIT_RC := true
 
-# Inherit common CM configuration
-$(call inherit-product, vendor/cm/config/common_full_tablet_wifionly.mk)
+# Inherit common configuration
++$(call inherit-product, vendor/xenonhd/products/common_tablet.mk)
++$(call inherit-product, vendor/xenonhd/products/common_drm.mk)
 
 # CyanogenMod specific overlay
-DEVICE_PACKAGE_OVERLAYS += device/samsung/espressowifi/overlay/cm-common
+DEVICE_PACKAGE_OVERLAYS += device/samsung/espressowifi/overlay/xenonhd-common
 
 # Inherit device configuration
 $(call inherit-product, device/samsung/espressowifi/aosp_espressowifi.mk)
-
-# Device identifier. This must come after all inclusions
-PRODUCT_NAME := cm_espressowifi
