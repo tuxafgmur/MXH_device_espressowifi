@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2016 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 480
@@ -24,9 +22,6 @@ TARGET_PROVIDES_INIT_RC := true
 # Inherit common configuration
 +$(call inherit-product, vendor/xenonhd/products/common_tablet.mk)
 +$(call inherit-product, vendor/xenonhd/products/common_drm.mk)
-
-# CyanogenMod specific overlay
-DEVICE_PACKAGE_OVERLAYS += device/samsung/espressowifi/overlay/xenonhd-common
 
 # Inherit device configuration
 $(call inherit-product, device/samsung/espressowifi/aosp_espressowifi.mk)
