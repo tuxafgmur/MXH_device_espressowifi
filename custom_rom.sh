@@ -14,14 +14,21 @@ rm -fr $WSYSTEMDIR/etc/terminfo
 rm -f  $WSYSTEMDIR/lib/hw/power.*.so
 rm -f  $WSYSTEMDIR/lib/hw/audio.primary.default.so
 rm -fr $WSYSTEMDIR/usr/share/vim
-rm -f  $WSYSTEMDIR/xbin/bash
-rm -f  $WSYSTEMDIR/xbin/nano
-rm -f  $WSYSTEMDIR/xbin/vim
-rm -f  $WSYSTEMDIR/micro_bench_static
 rm -f  $WSYSTEMDIR/xbin/{ls,ps}
+rm -f  $WSYSTEMDIR/xbin/bash
+rm -f  $WSYSTEMDIR/xbin/fio
+rm -f  $WSYSTEMDIR/xbin/ltrace
+rm -f  $WSYSTEMDIR/xbin/micro_bench_static
+rm -f  $WSYSTEMDIR/xbin/nano
+rm -f  $WSYSTEMDIR/xbin/perfprofd
+rm -f  $WSYSTEMDIR/xbin/simpleperf
+rm -f  $WSYSTEMDIR/xbin/strace
+rm -f  $WSYSTEMDIR/xbin/tcpdump
+rm -f  $WSYSTEMDIR/xbin/vim
 
 [ -e $WSYSTEMDIR/xbin/fstrim ] || ln -s ./busybox $WSYSTEMDIR/xbin/fstrim
-[ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s ./libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so
+[ -e $WSYSTEMDIR/vendor/lib/libion.so ] || ln -s libion_ti.so $WSYSTEMDIR/vendor/lib/libion.so
+[ -e $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so ] || ln -s libPVRScopeServices_SGX540_120.so $WSYSTEMDIR/vendor/lib/libPVRScopeServices.so
 
 cp   $ANDROID_BUILD_TOP/vendor/xenonhd/proprietary/common/fonts/NotoColorEmoji.ttf  $WSYSTEMDIR/fonts/
 
